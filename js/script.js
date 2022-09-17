@@ -13,7 +13,7 @@ let word = "magnolia";
 //max number of guesses
 let remainingGuesses = 8;
 //array guessed letters will be pushed to
-const guessedLetters = [];
+let guessedLetters = [];
 
 
 const getWord = async function() {
@@ -31,6 +31,7 @@ const getWord = async function() {
 //Start the game
 getWord();
 
+//Function to show placeholders for the letters of the word
 const displayBox = function(word) {
     const displayBoxLetters = [];
     for (let letter of word) {
@@ -39,7 +40,6 @@ const displayBox = function(word) {
     }
     wordInProgress.innerText = displayBoxLetters.join("");
 };
-
 
 guessButton.addEventListener("click", function(e) {
     e.preventDefault();
@@ -56,7 +56,6 @@ guessButton.addEventListener("click", function(e) {
         makeGuess(guess);
     }
     guessedLetter.value = "";
-
 });
 
 //Function to check if input is a valid letter
@@ -92,7 +91,7 @@ const makeGuess = function(guess) {
         console.log(guessedLetters);
         showGuessedLetters();
         wordInProgressUpdate(guessedLetters);
-        countRemainingGuesses(guess);
+        countRemainingGuesses(guess); 
     }
 };
 
@@ -111,10 +110,10 @@ const showGuessedLetters = function() {
 //function to update word in progress
 const wordInProgressUpdate = function(guessedLetters) {
     //change word to uppercase
-    const wordCapsOne = word.toUpperCase();
+    const wordCapitalize = word.toUpperCase();
     //split word
-    const wordArray = wordCapsOne.split("");
-    console.log(wordArray);
+    const wordArray = wordCapitalize.split("");
+    //console.log(wordArray);
     //new array to push letters
     const lettersInPlay = [];
      
@@ -128,7 +127,7 @@ const wordInProgressUpdate = function(guessedLetters) {
     }
     //console.log(lettersInPlay);
     wordInProgress.innerText = lettersInPlay.join("");
-    countRemainingGuesses();
+    countRemainingGuesses(); //check
     checkForWin();
 
 }
@@ -142,22 +141,24 @@ const countRemainingGuesses = function(guess) {
         outputBox.innerText = `Sorry, the word does not contain a ${guess}.`;
         remainingGuesses -=1
         console.log(remainingGuesses);
-        remainingGuessSpan.innerText = remainingGuesses;
+        //remainingGuessSpan.innerText = remainingGuesses;//check
     }
     else {
         outputBox.innerText = `Nice guess! The word contains the letter ${guess}.`;
     }
+
     //when guesses goes down to zero
     if (remainingGuesses === 0) {
         outputBox.innerHTML = `
             Game Over! The mystery word was <span class="highlight">${word}</span>. Better luck next time
             `;
+            startOver();
     }
     else if (remainingGuesses === 1) {
-        remainingGuesses.innerText = `${remainingGuesses} guess left`;
+        remainingGuessSpan.innerText = `${remainingGuesses} guess left`;
     }
     else {
-        remainingGuesses.innerText = `${remainingGuesses} guesses left`;
+        remainingGuessSpan.innerText = `${remainingGuesses} guesses left`;
     }
 };
 
@@ -170,7 +171,36 @@ const checkForWin = function() {
         outputBox.innerHTML = `
             <p class="highlight">You guessed the correct word!! Congrats!</p>
         `;
+
+        startOver();
     }
 };
+
+//Function to Start Game Over
+const startOver = function () {
+    guessButton.classList.add("hide");
+    remainingGuessDisplay.classList.add("hide");
+    guessedLettersList.classList.add("hide");
+    playAgainButton.classList.remove("hide");
+};
+
+playAgainButton.addEventListener("click", function() {
+    //reset
+    outputBox.classList.remove("win");
+    
+    guessButton.classList.remove("hide");
+    remainingGuessDisplay.classList.remove("hide");
+    guessedLettersList.classList.remove("hide");
+    playAgainButton.classList.add("hide");;
+
+    guessedLetters = [];
+    remainingGuesses = 8;
+    remainingGuessSpan.innerText = `${remainingGuesses} guesses`;
+    guessedLetter.innerHTML = "";
+    outputBox.innerText = "";
+
+    //generate a new word
+    getWord();
+});
 
 
